@@ -1,0 +1,98 @@
+
+# _________________ФУНКЦИИ __________________________________
+
+def greet():
+    print('-------------------')
+    print(' Приветствуем  Вас ')
+    print('      в  игре      ')
+    print('  крестики-нолики  ')
+    print('-------------------')
+    print(' фомат ввода: x, y ')
+    print(' x - номер строки  ')
+    print(' y - номер столбца ')
+    print('-------------------')
+
+
+def show_field():
+    num = '  1  2  3'
+    print(num)
+    for row, i in zip(field, num.split()):
+        print(f"{i} {'  '.join(str(j) for j in row)}")
+
+
+def ask_check():
+    while True:
+        coordinates = input("Твой ход. Введи координаты: ").split()
+
+        if len(coordinates) != 2:
+            print("Введи 2 координаты! ")
+            continue
+
+        x, y = coordinates
+
+        if not(x.isdigit()) or not(y.isdigit()):
+            print("Введи числа! ")
+            continue
+
+        x, y = int(x), int(y)
+        x, y = x-1, y-1
+
+        if 0 > x or x > 2 or 0 > y or y > 2:
+            print('Координаты вне диапазона!!! БУДЬ ВНИМАТЕЛЬНЕЕ')
+            continue
+
+        if field[x][y] != ' ':
+            print('ЛОШАРА!!! Клетка занята ')
+            continue
+
+        return x, y
+
+def win_check(f, user):
+
+    win_combinations = [((0, 0), (0, 1), (0, 2)), ((1, 0), (1, 1), (1, 2)), ((2, 0), (2, 1), (2, 2)), \
+                        ((0, 0), (1, 0), (2, 0)), ((0, 1), (1, 1), (2, 1)), ((0, 2), (1, 2), (2, 2)), \
+                        ((0, 2), (1, 1), (2, 0)), ((0, 0), (1, 1), (2, 2))]
+    for coordinates in win_combinations:
+        symbols = []
+
+        for c in coordinates:
+            symbols.append(field[c[0]][c[1]])
+
+        if symbols == ['X', 'X', 'X']:
+            return True
+        if symbols == ['O', 'O', 'O']:
+            return True
+
+    return False
+
+
+# _________________ПРОГРАММА __________________________________
+
+greet()
+field = [[" "] * 3 for _ in range(3)]
+step = 0
+while True:
+    step += 1
+    show_field()
+
+    x, y = ask_check()
+
+    if step % 2 == 0:
+        print('Ход ноликa')
+        user = 'O'
+    else:
+        print('Ход крестикa')
+        user = 'X'
+
+    field[x][y] = user
+
+    if win_check(field, user):
+        show_field()
+        print(f"ВНИМАНИЕ !!! Выиграл {user} ! ТЫ КРУТ !!!")
+        break
+
+    if step == 9:
+        field[x][y] = 'X'
+        show_field()
+        print('Ничья !!!')
+        break
